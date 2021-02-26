@@ -18,3 +18,4 @@
             git commit -m "..."
             git push
 
+git remote add origin git@github.com:alexpchin/<reponame>.git
