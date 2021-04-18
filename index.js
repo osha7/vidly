@@ -1,84 +1,30 @@
+const debug = require('debug')('app:startup');
+const config = require('config');
+const morgan = require('morgan');
+const helmet = require('helmet');
 const Joi = require('joi');
+
+const genres = require('./routes/genres');
+const home = require('./routes/home');
+
 const express = require('express');
 const app = express();
+const port =  process.env.PORT || 3010;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));   
+app.use(helmet());
+app.use('/api/genres', genres);
+app.use('/', home);
 
-const genres = [
-    { id: 1, name: 'comedy' },
-    { id: 2, name: 'drama' },
-    { id: 3, name: 'horror' },
-    { id: 4, name: 'romance' },
-    { id: 5, name: 'action' },
-    { id: 6, name: 'science fiction' },
-    { id: 7, name: 'musical' },
-];
+// Configuration
+console.log('Application Name: ' + config.get('name'));
+console.log('Mail Server: ' + config.get('mail.host'));
 
-app.get('/', (req, res) => {
-    res.send("Welcome to the home page!");
-});
-
-app.get('/api/genres', (req, res) => {
-    res.send(genres);
-});
-
-app.get('/api/genres/:id', (req, res) => {
-    const genre = genres.find(g => g.id === parseInt(req.params.id));
-    if(!genre) {
-        return res.status(404).send('That genre was not found.');
-    };
-    res.send(genre);
-});
-
-function validateGenre(genre) {
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
-    return Joi.validate(genre, schema);
+if(app.get('env') === 'development') {
+    app.use(morgan('tiny'));
+    console.log('Morgan enabled...');
 };
-
-app.post('/api/genres', (req, res) => {
-    const { error } = validateGenre(req.body);
-    if (error) {
-        return res.status(400).send(error.details[0].message);
-    };
-
-    const genre = {
-        id: genres.length + 1,
-        name: req.body.name
-    };
-    genres.push(genre);
-    res.send(genre);
-});
-
-app.put('/api/genres/:id', (req, res) => {
-    const genre = genres.find(g => g.id === parseInt(req.params.id));
-    if(!genre) {
-        return res.status(404).send('That genre was not found.');
-    };
-
-    const { error } = validateGenre(req.body);
-    if (error) {
-        return res.status(400).send(error.details[0].message);
-    };
-
-    genre.name = req.body.name;
-
-    res.send(genre);
-});
-
-app.delete('/api/genres/:id', (req, res) => {
-    const genre = genres.find(g => g.id === parseInt(req.params.id));
-    if(!genre) {
-        return res.status(404).send('That genre was not found.');
-    };
-
-    const index = genres.indexOf(genre);
-    genres.splice(index, 1);
-
-    res.send(genre);
-});
-
-const port =  process.env.PORT || 3010;
 
 app.listen(port, () => console.log(`Listening on port ${port}...`));
