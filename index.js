@@ -3,6 +3,7 @@ const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
 
+const customers = require('./routes/customers');
 const genres = require('./routes/genres');
 const home = require('./routes/home');
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));   
 app.use(helmet());
+app.use('/api/customers', customers);
 app.use('/api/genres', genres);
 app.use('/', home);
 
