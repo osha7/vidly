@@ -3,9 +3,10 @@ const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
 
-const customers = require('./routes/customers');
-const genres = require('./routes/genres');
 const home = require('./routes/home');
+const genres = require('./routes/genres');
+const customers = require('./routes/customers');
+const movies = require('./routes/movies');
 
 const express = require('express');
 const app = express();
@@ -23,9 +24,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));   
 app.use(helmet());
-app.use('/api/customers', customers);
-app.use('/api/genres', genres);
+
 app.use('/', home);
+app.use('/api/genres', genres);
+app.use('/api/customers', customers);
+app.use('/api/movies', movies);
 
 // Configuration
 console.log('Application Name: ' + config.get('name'));

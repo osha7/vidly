@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
 });
 
 router.put('/:id', async (req, res) => {
-    c// const { error } = validateGenre(req.body);
+    // const { error } = validateGenre(req.body);
     const { error } = validate(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
