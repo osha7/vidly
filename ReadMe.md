@@ -39,3 +39,16 @@
         const port =  process.env.PORT || 3000;
 
         app.listen(port, () => console.log(`Listening on port ${port}...`));
+
+## Run Program:
+
+    - mongoimport --db mongo-genre --collection genres --drop --file genre-data.json --jsonArray
+    - mongoimport --db mongo-genre --collection movies --drop --file movie-data.json --jsonArray
+    - nodemon
+
+    --- USE POSTMAN TO TEST CRUD ACTIONS
+
+{
+"customerId": "608ea718ab65df06eca768f9",
+"movieId": "608ea64e0d189d50c4ce3506"
+}

@@ -5,27 +5,6 @@ const router = express.Router();
 
 const { Movie, validate } = require('../models/movie');
 
-
-// async function createMovie(title, genre, numberInStock, dailyRentalRate) {
-//     const movie = new Movie({
-//         title,
-//         genre,
-//         numberInStock,
-//         dailyRentalRate
-//     });
-//     try {
-//         const result = await movie.save();
-//         console.log("Result", result);
-//     }
-//     catch (exception) {
-//         for (field in exception.errors) {
-//             console.log(exception.errors[field])
-//         }
-//     }
-// };
-
-// createMovie("Terminator", new genreSchema.Genre({ name: "Sci-Fi" }), 0, 0);
-
 router.get('/', async (req, res) => {
     const movies = await Movie.find().sort('title');
     res.send(movies);
@@ -49,7 +28,8 @@ router.post('/', async (req, res) => {
     const genre = await Genre.findById(req.body.genreId);
     if (!genre) return res.status(400).send('Invalid Genre');
 
-    let movie = new Movie({
+    // let movie = new Movie({
+    const movie = new Movie({
         title: req.body.title,
         genre: { // read both of the properties below directly from genre don't do this: genre: genre, bc an attribute is also the version property, and we don't want that
             _id: genre._id,
@@ -58,7 +38,8 @@ router.post('/', async (req, res) => {
         numberInStock: req.body.numberInStock,
         dailyRentalRate: req.body.dailyRentalRate
     });
-    movie = await movie.save();
+    // movie = await movie.save();
+    await movie.save();
     res.send(movie);
 })
 
@@ -68,15 +49,21 @@ router.put('/:id', async (req, res) => {
         return res.send(400).send(error.details[0].message);
     };
 
+    const genre = await Genre.findById(req.body.genreId);
+    if (!genre) return res.status(400).send('Invalid genre.');
+
     const movie = await Movie.findByIdAndUpdate(req.params.id, {
         title: req.body.title,
-        genre: req.body.genre,
+        genre: {
+            _id: genre._id,
+            name: genre.name
+        },
         numberInStock: req.body.numberInStock,
         dailyRentalRate: req.body.dailyRentalRate
     }, {
     new: true
     });
-    if(!genre) {
+    if(!movie) {
         return res.status(404).send('The movie with that id was not found.');
     };
     res.send(movie);

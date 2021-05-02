@@ -1,0 +1,10 @@
+[
+    {
+        "title": "Terminator",
+        "genre": {
+            "name": "Sci-Fi"
+        },
+        "numberInStock": 8,
+        "dailyRentalRate": 2
+    }
+]
